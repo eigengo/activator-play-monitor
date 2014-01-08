@@ -1,0 +1,83 @@
+<html>
+<head>
+    <title>Play Framework (Scala) with Monitoring - Activator Template</title>
+</head>
+<body>
+<div>
+    <p>
+        You've just created a simple Scala Play Framework application with Monitoring!
+    </p>
+    <p>
+        This activator template is based on <a href="https://github.com/typesafehub/activator-hello-play-scala">activator-hello-play-scala<a/>
+        and adds monitoring using the excellent <a href="">monitor tool</a>.
+    </p>
+
+    <h2>View the App</h2>
+
+    <p>
+        Once the application has been compiled and the server started, your application can be accessed at: <a href="http://localhost:9000" target="_blank">http://localhost:9000</a><br/>
+        Check in <a href="#run" class="shortcut">Run</a> to see the server status.<br/>
+        When you make an HTTP request to that URL, the Play server figures out what code to execute which will handle the request and return a response.  In this application the request handler for requests to the root URL (e.g. "/") are handled by a Java Controller.  You can use Java and Scala to create your controllers.<br/>
+        Controllers asynchronously return HTTP responses of any content type (i.e. HTML, JSON, binary).
+    </p>
+</div>
+<div>
+    <h2>Dependencies</h2>
+    <h3>Artifacts</h3>
+    <p>
+        Two dependencies have been added to <code>build.sbt</code> to enable monitoring.  Firstly there's <code>org.eigengo.monitor:agent-play</code>
+        which contains the code to inject monitoring points.  Secondly there's <code>org.eigengo.monitor:output-statsd</code> which provides
+        output of the monitoring to statsd.
+    </p>
+    <h3>Statsd</h3>
+    <p>
+        In order to see the monitoring data, e.g. the `play.request.count` it will be necessary to run `statsd`.  This application
+        has been successfully tested against <a href="http://docs.datadoghq.com/guides/dogstatsd">Datadog's statsd agent</a>.
+        With datadog it is possible to view the stats on a pretty dashboard so it makes for an excellent choice.
+    </p>
+    <h3>Java agent</h3>
+    <p>
+        Since the monitoring depends upon aspectj to weave in the monitoring points it is necessary to configure aspectj as
+        a Java agent on the JVM running the application.  When running the application via the Play build tool this can be achieved
+        by adding an environment variable called <code>PLAY_OPTS</code>.  Let's say you had the aspectj weaver library
+        within your home directory
+        and your username was joeb, then your variable would look something like this:
+        <code><pre>
+            -javaagent:/Users/joeb/aspectjweaver-1.7.3.jar
+        </pre></code>
+    </p>
+    <p>
+        Naturally, if you are already using this environment variable,
+        the <code>-javaagent</code> part can simply be appended.
+    </p>
+    <p>
+        When your Play app is run in production, most likely via the dist zip, then you will need to ensure the javaagent switch is
+        passed to the start script to enable monitoring. See
+        <a href="http://www.playframework.com/documentation/2.2.x/ProductionConfiguration">
+                Play's Production Configuration documentation
+        </a>
+        for more details
+    </p>
+</div>
+<div>
+    <h2>Monitor configuration</h2>
+    <p>
+        To configure the monitoring it has been necessary to add two files on the classpath:
+    <ul>
+        <li><code>META-INF/monitor/agent.conf</code></li>
+        <li><code>META-INF/monitor/output.conf</code></li>
+    </ul>
+    </p>
+    <h3>agent.conf</h3>
+    <p>
+        This file contains the settings for the monitoring agent such as output class name and the name of the agent.  Currently,
+        there aren't any specific settings for the play agent but it is likely that filters will be added to suppress counting
+        requests to certain URLs.
+    </p>
+    <h3>output.conf</h3>
+    <p>
+        This file contains the settings for the statsd output such as <code>remoteAddress</code> and <code>remotePort</code>.
+    </p>
+</div>
+</body>
+</html>
